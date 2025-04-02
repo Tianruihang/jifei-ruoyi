@@ -1,8 +1,12 @@
 package com.ruoyi.web.controller.system;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.UserBalance;
+import com.ruoyi.system.service.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,10 +31,6 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.system.service.ISysDeptService;
-import com.ruoyi.system.service.ISysPostService;
-import com.ruoyi.system.service.ISysRoleService;
-import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 用户信息
@@ -52,6 +52,8 @@ public class SysUserController extends BaseController
 
     @Autowired
     private ISysPostService postService;
+    @Autowired
+    private IUserBalanceService userBalanceService;
 
     /**
      * 获取用户列表
@@ -140,7 +142,17 @@ public class SysUserController extends BaseController
         }
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
-        return toAjax(userService.insertUser(user));
+        int row = userService.insertUser(user);
+        if (row > 0) {
+            // 新增用户成功，添加用户余额
+            UserBalance userBalance = new UserBalance();
+            userBalance.setUserId(user.getUserId());
+            userBalance.setBalance(0L);
+            userBalance.setCreateDate(new Date());
+            userBalance.setUpdateDate(new Date());
+            userBalanceService.insertUserBalance(userBalance);
+        }
+        return toAjax(row);
     }
 
     /**

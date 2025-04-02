@@ -699,3 +699,108 @@ create table gen_table_column (
   update_time       datetime                                   comment '更新时间',
   primary key (column_id)
 ) engine=innodb auto_increment=1 comment = '代码生成业务表字段';
+
+-- ----------------------------
+-- 20、计费管理业务
+-- ----------------------------
+-- id project_id project_name limit_amount(消耗的次数) user_id  create_date update_date  create_by update_by remark
+drop table if exists charge_info;
+create table charge_info (
+    id bigint(20) not null auto_increment comment '主键ID',
+    project_id bigint(20) not null comment '项目ID',
+    project_name varchar(100) not null comment '项目名称',
+    limit_amount int(11) not null comment '消耗点数',
+    user_id bigint(20) not null comment '用户ID',
+    create_date datetime comment '创建时间',
+    update_date datetime comment '更新时间',
+    create_by varchar(50) default '' comment '创建者',
+    update_by varchar(50) default '' comment '更新者',
+    remark varchar(500) default '' comment '备注',
+    primary key (id)
+) engine=innodb auto_increment=100 comment = '计费管理业务表';
+
+-- ----------------------------
+-- 21、计费接口记录表
+-- ----------------------------
+-- id  project_id project_name create_date update_date create_by update_by remark
+drop table if exists charge_api_history;
+create table charge_api_history (
+    id bigint(20) not null auto_increment comment '主键ID',
+    project_id bigint(20) not null comment '项目ID',
+    project_name varchar(100) not null comment '项目名称',
+    create_date datetime comment '创建时间',
+    update_date datetime comment '更新时间',
+    create_by varchar(50) default '' comment '创建者',
+    update_by varchar(50) default '' comment '更新者',
+    remark varchar(500) default '' comment '备注',
+    primary key (id)
+) engine=innodb auto_increment=1 comment = '计费接口记录表';
+
+-- ----------------------------
+-- 22、线下用户充值记录表
+-- ----------------------------
+-- id amount user_id create_date update_date create_by update_by remark
+drop table if exists charge_offline_record;
+create table charge_offline_record (
+    id bigint(20) not null auto_increment comment '主键ID',
+    amount int(11) not null comment '充值金额',
+    user_id bigint(20) not null comment '用户ID',
+    create_date datetime comment '创建时间',
+    update_date datetime comment '更新时间',
+    create_by varchar(50) default '' comment '创建者',
+    update_by varchar(50) default '' comment '更新者',
+    remark varchar(500) default '' comment '备注',
+    primary key (id)
+) engine=innodb auto_increment=1 comment = '线下用户充值记录表';
+
+-- ----------------------------
+-- 23、用户余额表
+-- ----------------------------
+-- id user_id balance create_date update_date create_by update_by remark
+drop table if exists user_balance;
+create table user_balance (
+    id bigint(20) not null auto_increment comment '主键ID',
+    user_id bigint(20) not null comment '用户ID',
+    balance int(11) not null comment '余额',
+    create_date datetime comment '创建时间',
+    update_date datetime comment '更新时间',
+    create_by varchar(50) default '' comment '创建者',
+    update_by varchar(50) default '' comment '更新者',
+    remark varchar(500) default '' comment '备注',
+    primary key (id)
+) engine=innodb auto_increment=1 comment = '用户余额表';
+
+-- ----------------------------
+-- 24、积分消费规则表
+-- ----------------------------
+-- id project_id project_name limit_amount(消耗的次数) create_date update_date  create_by update_by remark
+drop table if exists charge_rule;
+create table charge_rule (
+    id bigint(20) not null auto_increment comment '主键ID',
+    project_id bigint(20) not null comment '项目ID',
+    project_name varchar(100) not null comment '项目名称',
+    limit_amount int(11) not null comment '消耗点数',
+    create_date datetime comment '创建时间',
+    update_date datetime comment '更新时间',
+    create_by varchar(50) default '' comment '创建者',
+    update_by varchar(50) default '' comment '更新者',
+    remark varchar(500) default '' comment '备注',
+    primary key (id)
+) engine=innodb auto_increment=1 comment = '积分消费规则表';
+
+-- ----------------------------
+-- 25、积分与余额兑换公式表
+-- ----------------------------
+-- id limit_amount amount create_date update_date  create_by update_by remark
+drop table if exists charge_exchange;
+create table charge_exchange (
+    id bigint(20) not null auto_increment comment '主键ID',
+    limit_amount int(11) not null comment '点数',
+    amount int(11) not null comment '兑换金额',
+    create_date datetime comment '创建时间',
+    update_date datetime comment '更新时间',
+    create_by varchar(50) default '' comment '创建者',
+    update_by varchar(50) default '' comment '更新者',
+    remark varchar(500) default '' comment '备注',
+    primary key (id)
+) engine=innodb auto_increment=1 comment = '积分与余额兑换公式表';

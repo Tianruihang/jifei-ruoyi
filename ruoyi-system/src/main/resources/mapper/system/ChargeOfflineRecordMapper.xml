@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ChargeOfflineRecordMapper">
+    
+    <resultMap type="ChargeOfflineRecord" id="ChargeOfflineRecordResult">
+        <result property="id"    column="id"    />
+        <result property="amount"    column="amount"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectChargeOfflineRecordVo">
+        select id, amount, c.user_id as user_id, c.create_date, c.update_date, c.create_by, c.update_by, c.remark,u.user_name
+        from charge_offline_record c left join sys_user u on c.user_id = u.user_id
+    </sql>
+
+    <select id="selectChargeOfflineRecordList" parameterType="ChargeOfflineRecord" resultMap="ChargeOfflineRecordResult">
+        <include refid="selectChargeOfflineRecordVo"/>
+        <where>  
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+             <if test="userName != null  and userName != ''"> and u.user_name like concat('%', #{userName}, '%')</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectChargeOfflineRecordById" parameterType="Long" resultMap="ChargeOfflineRecordResult">
+        <include refid="selectChargeOfflineRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertChargeOfflineRecord" parameterType="ChargeOfflineRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into charge_offline_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="amount != null">amount,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="amount != null">#{amount},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChargeOfflineRecord" parameterType="ChargeOfflineRecord">
+        update charge_offline_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChargeOfflineRecordById" parameterType="Long">
+        delete from charge_offline_record where id = #{id}
+    </delete>
+
+    <delete id="deleteChargeOfflineRecordByIds" parameterType="String">
+        delete from charge_offline_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

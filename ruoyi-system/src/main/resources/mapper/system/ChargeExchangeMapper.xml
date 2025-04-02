@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ChargeExchangeMapper">
+    
+    <resultMap type="ChargeExchange" id="ChargeExchangeResult">
+        <result property="id"    column="id"    />
+        <result property="limitAmount"    column="limit_amount"    />
+        <result property="amount"    column="amount"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectChargeExchangeVo">
+        select id, limit_amount, amount, create_date, update_date, create_by, update_by, remark from charge_exchange
+    </sql>
+
+    <select id="selectChargeExchangeList" parameterType="ChargeExchange" resultMap="ChargeExchangeResult">
+        <include refid="selectChargeExchangeVo"/>
+        <where>  
+            <if test="limitAmount != null "> and limit_amount = #{limitAmount}</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectChargeExchangeById" parameterType="Long" resultMap="ChargeExchangeResult">
+        <include refid="selectChargeExchangeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertChargeExchange" parameterType="ChargeExchange" useGeneratedKeys="true" keyProperty="id">
+        insert into charge_exchange
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="limitAmount != null">limit_amount,</if>
+            <if test="amount != null">amount,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="limitAmount != null">#{limitAmount},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChargeExchange" parameterType="ChargeExchange">
+        update charge_exchange
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="limitAmount != null">limit_amount = #{limitAmount},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChargeExchangeById" parameterType="Long">
+        delete from charge_exchange where id = #{id}
+    </delete>
+
+    <delete id="deleteChargeExchangeByIds" parameterType="String">
+        delete from charge_exchange where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
