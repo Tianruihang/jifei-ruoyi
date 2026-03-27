@@ -30,12 +30,15 @@ import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 角色信息
  * 
  * @author ruoyi
  */
+@Api(tags = "角色管理")
 @RestController
 @RequestMapping("/system/role")
 public class SysRoleController extends BaseController

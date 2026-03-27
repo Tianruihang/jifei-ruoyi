@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.ChargeExchange;
 import com.ruoyi.system.service.IChargeExchangeService;
 import com.ruoyi.system.service.ISysUserService;
@@ -45,10 +46,14 @@ public class UserBalanceController extends BaseController
     /**
      * 查询用户余额列表
      */
-    @PreAuthorize("@ss.hasPermi('system:balance:list')")
     @GetMapping("/list")
     public TableDataInfo list(UserBalance userBalance)
     {
+        //判断如果不是管理员，则只能查询自己的数据
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            SysUser sysUser = sysUserService.selectUserById(SecurityUtils.getUserId());
+            userBalance.setUserName(sysUser.getUserName());
+        }
         startPage();
         List<UserBalance> list = userBalanceService.selectUserBalanceList(userBalance);
         //遍历用户余额列表，根据ChargeExchange表中的兑换比例计算余额
@@ -67,11 +72,15 @@ public class UserBalanceController extends BaseController
     /**
      * 导出用户余额列表
      */
-    @PreAuthorize("@ss.hasPermi('system:balance:export')")
     @Log(title = "用户余额", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, UserBalance userBalance)
     {
+        //判断如果不是管理员，则只能查询自己的数据
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            SysUser sysUser = sysUserService.selectUserById(SecurityUtils.getUserId());
+            userBalance.setUserName(sysUser.getUserName());
+        }
         List<UserBalance> list = userBalanceService.selectUserBalanceList(userBalance);
         ExcelUtil<UserBalance> util = new ExcelUtil<UserBalance>(UserBalance.class);
         util.exportExcel(response, list, "用户余额数据");
@@ -80,7 +89,6 @@ public class UserBalanceController extends BaseController
     /**
      * 获取用户余额详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:balance:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -99,6 +107,8 @@ public class UserBalanceController extends BaseController
         if (sysUser == null) {
             return AjaxResult.error("用户不存在");
         }
+        //完善用户余额
+        userBalance.setUserId(sysUser.getUserId());
         return toAjax(userBalanceService.insertUserBalance(userBalance));
     }
 

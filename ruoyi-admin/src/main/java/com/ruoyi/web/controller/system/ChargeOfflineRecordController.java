@@ -3,6 +3,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.ChargeExchange;
 import com.ruoyi.system.domain.UserBalance;
 import com.ruoyi.system.service.IChargeExchangeService;
@@ -48,10 +49,14 @@ public class ChargeOfflineRecordController extends BaseController
     /**
      * 查询线下用户充值记录列表
      */
-    @PreAuthorize("@ss.hasPermi('system:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(ChargeOfflineRecord chargeOfflineRecord)
     {
+        //判断如果不是管理员，则只能查询自己的数据
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            SysUser sysUser = sysUserService.selectUserById(SecurityUtils.getUserId());
+            chargeOfflineRecord.setUserName(sysUser.getUserName());
+        }
         startPage();
         List<ChargeOfflineRecord> list = chargeOfflineRecordService.selectChargeOfflineRecordList(chargeOfflineRecord);
         return getDataTable(list);
@@ -60,7 +65,6 @@ public class ChargeOfflineRecordController extends BaseController
     /**
      * 导出线下用户充值记录列表
      */
-    @PreAuthorize("@ss.hasPermi('system:record:export')")
     @Log(title = "线下用户充值记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, ChargeOfflineRecord chargeOfflineRecord)
@@ -73,7 +77,6 @@ public class ChargeOfflineRecordController extends BaseController
     /**
      * 获取线下用户充值记录详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

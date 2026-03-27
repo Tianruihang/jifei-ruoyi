@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +43,14 @@ public class ChargeInfoController extends BaseController
     /**
      * 查询计费管理业务列表
      */
-    @PreAuthorize("@ss.hasPermi('system:info:list')")
     @GetMapping("/list")
     public TableDataInfo list(ChargeInfo chargeInfo)
     {
+        //判断如果不是管理员，则只能查询自己的数据
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            SysUser sysUser = sysUserService.selectUserById(SecurityUtils.getUserId());
+            chargeInfo.setUserName(sysUser.getUserName());
+        }
         startPage();
         List<ChargeInfo> list = chargeInfoService.selectChargeInfoList(chargeInfo);
         return getDataTable(list);
@@ -54,11 +59,15 @@ public class ChargeInfoController extends BaseController
     /**
      * 导出计费管理业务列表
      */
-    @PreAuthorize("@ss.hasPermi('system:info:export')")
     @Log(title = "计费管理业务", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, ChargeInfo chargeInfo)
     {
+        //判断如果不是管理员，则只能查询自己的数据
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            SysUser sysUser = sysUserService.selectUserById(SecurityUtils.getUserId());
+            chargeInfo.setUserName(sysUser.getUserName());
+        }
         List<ChargeInfo> list = chargeInfoService.selectChargeInfoList(chargeInfo);
         ExcelUtil<ChargeInfo> util = new ExcelUtil<ChargeInfo>(ChargeInfo.class);
         util.exportExcel(response, list, "计费管理业务数据");
@@ -67,7 +76,6 @@ public class ChargeInfoController extends BaseController
     /**
      * 获取计费管理业务详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:info:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

@@ -25,6 +25,9 @@ public class SysUser extends BaseEntity
     @Excel(name = "用户序号", type = Type.EXPORT, cellType = ColumnType.NUMERIC, prompt = "用户编号")
     private Long userId;
 
+    @Excel(name = "用户app id号", type = Type.EXPORT, cellType = ColumnType.NUMERIC, prompt = "用户app端id号")
+    private Long appUserId;
+
     /** 部门ID */
     @Excel(name = "部门编号", type = Type.IMPORT)
     private Long deptId;
@@ -320,5 +323,13 @@ public class SysUser extends BaseEntity
             .append("remark", getRemark())
             .append("dept", getDept())
             .toString();
+    }
+
+    public Long getAppUserId() {
+        return appUserId;
+    }
+
+    public void setAppUserId(Long appUserId) {
+        this.appUserId = appUserId;
     }
 }

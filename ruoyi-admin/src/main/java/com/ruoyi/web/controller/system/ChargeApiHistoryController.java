@@ -1,7 +1,9 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -53,10 +55,13 @@ public class ChargeApiHistoryController extends BaseController
     /**
      * 查询计费接口记录列表
      */
-    @PreAuthorize("@ss.hasPermi('system:history:list')")
     @GetMapping("/list")
     public TableDataInfo list(ChargeApiHistory chargeApiHistory)
     {
+        //判断如果不是管理员，则只能查询自己的数据
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            chargeApiHistory.setUserId(SecurityUtils.getUserId());
+        }
         startPage();
         List<ChargeApiHistory> list = chargeApiHistoryService.selectChargeApiHistoryList(chargeApiHistory);
         return getDataTable(list);
@@ -78,7 +83,6 @@ public class ChargeApiHistoryController extends BaseController
     /**
      * 获取计费接口记录详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:history:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -93,11 +97,14 @@ public class ChargeApiHistoryController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody ChargeApiHistory chargeApiHistory)
     {
+        Map  result = new HashMap();
         //根据userName查询用户ID
-        String userName = chargeApiHistory.getUserName();
-        SysUser  sysUser = sysUserService.selectUserByUserName(userName);
+//        String userName = chargeApiHistory.getUserId();
+        SysUser  sysUser = sysUserService.selectUserById(chargeApiHistory.getUserId());
         if (sysUser == null) {
-            return AjaxResult.error("用户不存在");
+            result.put("status",false);
+            result.put("msg","用户不存在");
+            return AjaxResult.success(result);
         }
         chargeApiHistory.setUserId(sysUser.getUserId());
         int row = 0;
@@ -110,10 +117,19 @@ public class ChargeApiHistoryController extends BaseController
         //根据产品ID查询产品规则
         ChargeRule chargeRule = chargeRuleService.selectChargeRuleById(chargeApiHistory.getProjectId());
         if (userBalance == null) {
-            return AjaxResult.error("用户不存在");
+            result.put("status",false);
+            result.put("msg","用户余额不足");
+            return AjaxResult.success(result);
+        }
+        if (userBalance.getBalance() < chargeRule.getLimitAmount()) {
+            result.put("status",false);
+            result.put("msg","用户余额不足");
+            return AjaxResult.success(result);
         }
         if (chargeRule == null) {
-            return AjaxResult.error("产品规则不存在");
+            result.put("status",false);
+            result.put("msg","未配置产品规则");
+            return AjaxResult.success(result);
         }
         //新增ChargeInfo信息
         ChargeInfo chargeInfo = new ChargeInfo();
@@ -135,10 +151,18 @@ public class ChargeApiHistoryController extends BaseController
             row   = chargeApiHistoryService.insertChargeApiHistory(chargeApiHistory);
         } catch (Exception e) {
             log.error("扣除用户余额失败 userId {}", SecurityUtils.getUserId() );
-            return AjaxResult.error("扣除用户余额失败");
+            result.put("status",false);
+            result.put("msg","扣除用户余额失败");
+            return AjaxResult.success(result);
         }
-
-        return toAjax(row);
+        if (row >0 ) {{
+            result.put("status",true);}
+            result.put("msg","操作成功");
+        }else {
+            result.put("status",false);
+            result.put("msg","操作失败");
+        }
+        return AjaxResult.success(result);
     }
 
     /**

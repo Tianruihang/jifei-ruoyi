@@ -66,7 +66,6 @@ public class SysLoginService
     public AjaxResult login(String username, String password, String code, String uuid, boolean thirdPartyLogin)
     {
         if (!thirdPartyLogin)
-        // 验证码校验
         validateCaptcha(username, code, uuid);
         // 登录前置校验
         loginPreCheck(username, password);
