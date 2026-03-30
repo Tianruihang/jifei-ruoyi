@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ChargeOnlineRecordMapper">
+
+    <resultMap type="ChargeOnlineRecord" id="ChargeOnlineRecordResult">
+        <result property="id" column="id"/>
+        <result property="outTradeNo" column="out_trade_no"/>
+        <result property="thirdTradeNo" column="third_trade_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="payChannel" column="pay_channel"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="points" column="points"/>
+        <result property="tradeStatus" column="trade_status"/>
+        <result property="qrCode" column="qr_code"/>
+        <result property="paidTime" column="paid_time"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectChargeOnlineRecordVo">
+        select r.id, r.out_trade_no, r.third_trade_no, r.user_id, u.user_name, r.product_id, r.product_name,
+               r.pay_channel, r.pay_amount, r.points, r.trade_status, r.qr_code, r.paid_time,
+               r.create_date, r.update_date, r.create_by, r.update_by, r.remark
+        from charge_online_record r
+                 left join sys_user u on r.user_id = u.user_id
+    </sql>
+
+    <select id="selectChargeOnlineRecordList" parameterType="ChargeOnlineRecord" resultMap="ChargeOnlineRecordResult">
+        <include refid="selectChargeOnlineRecordVo"/>
+        <where>
+            <if test="outTradeNo != null and outTradeNo != ''">and r.out_trade_no like concat('%', #{outTradeNo}, '%')</if>
+            <if test="userId != null">and r.user_id = #{userId}</if>
+            <if test="userName != null and userName != ''">and u.user_name like concat('%', #{userName}, '%')</if>
+            <if test="productId != null and productId != ''">and r.product_id = #{productId}</if>
+            <if test="payChannel != null and payChannel != ''">and r.pay_channel = #{payChannel}</if>
+            <if test="tradeStatus != null and tradeStatus != ''">and r.trade_status = #{tradeStatus}</if>
+        </where>
+        order by r.id desc
+    </select>
+
+    <select id="selectChargeOnlineRecordById" parameterType="Long" resultMap="ChargeOnlineRecordResult">
+        <include refid="selectChargeOnlineRecordVo"/>
+        where r.id = #{id}
+    </select>
+
+    <select id="selectChargeOnlineRecordByOutTradeNo" parameterType="String" resultMap="ChargeOnlineRecordResult">
+        <include refid="selectChargeOnlineRecordVo"/>
+        where r.out_trade_no = #{outTradeNo}
+        limit 1
+    </select>
+
+    <select id="selectChargeOnlineRecordByOutTradeNoAndUserId" resultMap="ChargeOnlineRecordResult">
+        <include refid="selectChargeOnlineRecordVo"/>
+        where r.out_trade_no = #{outTradeNo} and r.user_id = #{userId}
+        limit 1
+    </select>
+
+    <insert id="insertChargeOnlineRecord" parameterType="ChargeOnlineRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into charge_online_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="outTradeNo != null and outTradeNo != ''">out_trade_no,</if>
+            <if test="thirdTradeNo != null and thirdTradeNo != ''">third_trade_no,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="productId != null and productId != ''">product_id,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="payChannel != null and payChannel != ''">pay_channel,</if>
+            <if test="payAmount != null">pay_amount,</if>
+            <if test="points != null">points,</if>
+            <if test="tradeStatus != null and tradeStatus != ''">trade_status,</if>
+            <if test="qrCode != null and qrCode != ''">qr_code,</if>
+            <if test="paidTime != null">paid_time,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="outTradeNo != null and outTradeNo != ''">#{outTradeNo},</if>
+            <if test="thirdTradeNo != null and thirdTradeNo != ''">#{thirdTradeNo},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="productId != null and productId != ''">#{productId},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="payChannel != null and payChannel != ''">#{payChannel},</if>
+            <if test="payAmount != null">#{payAmount},</if>
+            <if test="points != null">#{points},</if>
+            <if test="tradeStatus != null and tradeStatus != ''">#{tradeStatus},</if>
+            <if test="qrCode != null and qrCode != ''">#{qrCode},</if>
+            <if test="paidTime != null">#{paidTime},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateChargeOnlineRecord" parameterType="ChargeOnlineRecord">
+        update charge_online_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="outTradeNo != null and outTradeNo != ''">out_trade_no = #{outTradeNo},</if>
+            <if test="thirdTradeNo != null">third_trade_no = #{thirdTradeNo},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="productId != null and productId != ''">product_id = #{productId},</if>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="payChannel != null and payChannel != ''">pay_channel = #{payChannel},</if>
+            <if test="payAmount != null">pay_amount = #{payAmount},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="tradeStatus != null and tradeStatus != ''">trade_status = #{tradeStatus},</if>
+            <if test="qrCode != null">qr_code = #{qrCode},</if>
+            <if test="paidTime != null">paid_time = #{paidTime},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChargeOnlineRecordById" parameterType="Long">
+        delete from charge_online_record where id = #{id}
+    </delete>
+
+    <delete id="deleteChargeOnlineRecordByIds" parameterType="String">
+        delete from charge_online_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

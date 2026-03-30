@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.UserBalance;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户余额Mapper接口
@@ -46,6 +47,15 @@ public interface UserBalanceMapper
      * @return 结果
      */
     public int updateUserBalance(UserBalance userBalance);
+
+    /**
+     * 按用户ID增加余额
+     *
+     * @param userId 用户ID
+     * @param delta 增加值
+     * @return 结果
+     */
+    public int increaseUserBalance(@Param("userId") Long userId, @Param("delta") Long delta);
 
     /**
      * 删除用户余额

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ChargeOnlineProductMapper">
+
+    <resultMap type="ChargeOnlineProduct" id="ChargeOnlineProductResult">
+        <result property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="price" column="price"/>
+        <result property="points" column="points"/>
+        <result property="status" column="status"/>
+        <result property="sortNum" column="sort_num"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectChargeOnlineProductVo">
+        select id, product_id, product_name, price, points, status, sort_num, create_date, update_date, create_by, update_by, remark
+        from charge_online_product
+    </sql>
+
+    <select id="selectChargeOnlineProductList" parameterType="ChargeOnlineProduct" resultMap="ChargeOnlineProductResult">
+        <include refid="selectChargeOnlineProductVo"/>
+        <where>
+            <if test="productId != null and productId != ''">and product_id like concat('%', #{productId}, '%')</if>
+            <if test="productName != null and productName != ''">and product_name like concat('%', #{productName}, '%')</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+        </where>
+        order by sort_num asc, id desc
+    </select>
+
+    <select id="selectChargeOnlineProductById" parameterType="Long" resultMap="ChargeOnlineProductResult">
+        <include refid="selectChargeOnlineProductVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectChargeOnlineProductByProductId" parameterType="String" resultMap="ChargeOnlineProductResult">
+        <include refid="selectChargeOnlineProductVo"/>
+        where product_id = #{productId}
+        limit 1
+    </select>
+
+    <insert id="insertChargeOnlineProduct" parameterType="ChargeOnlineProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into charge_online_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null and productId != ''">product_id,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="price != null">price,</if>
+            <if test="points != null">points,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="sortNum != null">sort_num,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null and productId != ''">#{productId},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="price != null">#{price},</if>
+            <if test="points != null">#{points},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateChargeOnlineProduct" parameterType="ChargeOnlineProduct">
+        update charge_online_product
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productId != null and productId != ''">product_id = #{productId},</if>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChargeOnlineProductById" parameterType="Long">
+        delete from charge_online_product where id = #{id}
+    </delete>
+
+    <delete id="deleteChargeOnlineProductByIds" parameterType="String">
+        delete from charge_online_product where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -78,6 +78,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="increaseUserBalance">
+        update user_balance
+        set balance = balance + #{delta}
+        where user_id = #{userId}
+    </update>
+
     <delete id="deleteUserBalanceById" parameterType="Long">
         delete from user_balance where id = #{id}
     </delete>

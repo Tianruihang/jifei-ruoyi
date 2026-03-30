@@ -76,6 +76,12 @@ public class UserBalanceServiceImpl implements IUserBalanceService
         return userBalanceMapper.updateUserBalance(userBalance);
     }
 
+    @Override
+    public int increaseUserBalance(Long userId, Long delta)
+    {
+        return userBalanceMapper.increaseUserBalance(userId, delta);
+    }
+
     /**
      * 批量删除用户余额
      * 

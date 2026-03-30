@@ -49,6 +49,15 @@ public interface IUserBalanceService
     public int updateUserBalance(UserBalance userBalance);
 
     /**
+     * 按用户ID增加余额
+     *
+     * @param userId 用户ID
+     * @param delta 增加值
+     * @return 结果
+     */
+    public int increaseUserBalance(Long userId, Long delta);
+
+    /**
      * 批量删除用户余额
      * 
      * @param ids 需要删除的用户余额主键集合
